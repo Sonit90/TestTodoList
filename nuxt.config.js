@@ -13,10 +13,15 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  css:[
+    '~assets/css/main.scss'
+  ],
   /*
   ** Customize the progress bar color
   */
+  modules: ['nuxt-material-design-icons'],
   loading: { color: '#3B8070' },
+  plugins: [{ src: '~/plugins/localStorage.js', ssr: false }],
   /*
   ** Build configuration
   */

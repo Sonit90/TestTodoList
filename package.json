@@ -13,7 +13,14 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "nuxt": "^2.0.0"
+    "node-sass": "^4.14.1",
+    "nuxt": "^2.0.0",
+    "nuxt-material-design-icons": "^1.0.4",
+    "sass-loader": "^8.0.2",
+    "uuid": "^8.1.0",
+    "vue-select": "^3.10.3",
+    "vuex-map-fields": "^1.4.0",
+    "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

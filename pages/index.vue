@@ -1,65 +1,119 @@
 <template>
   <section class="container">
-    <div>
-      <app-logo/>
-      <h1 class="title">
-        todo-list
-      </h1>
-      <h2 class="subtitle">
-        test todo-list
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
+    <div class="row">
+      <div class="table-container">
+        <todo-table
+          title="Задачи"
+          :data="filteredTasks"
+          :columns="columns">
+          <template #top-after>
+            <nuxt-link
+              class="base-button base-button-small"
+              :to="{name: 'add'}">
+              Добавить задачу
+              <span class="material-icons ml-sm">
+                note_add
+              </span>
+            </nuxt-link>
+          </template>
+          <template
+            #title="{row}">
+            <span
+              :class="{del:row.done}"
+              v-text="row.title"/>
+          </template>
+          <template
+            #done="{row}">
+            <input
+              type="checkbox"
+              v-model="row.done"
+            >
+          </template>
+          <template #controls="{row}">
+            <nuxt-link
+              class="base-button"
+              :to="{name: 'id', params:{id: row.id}}">
+              <span class="material-icons">
+                visibility
+              </span>
+            </nuxt-link>
+            <nuxt-link
+              class="base-button"
+              :to="{name: 'edit-id', params:{id: row.id}}">
+              <span class="material-icons">
+                edit
+              </span>
+            </nuxt-link>
+            <BaseButton @click="REMOVE_TASK(row.id)">
+              <span class="material-icons">
+                delete
+              </span>
+            </BaseButton>
+          </template>
+        </todo-table>
       </div>
+      <Filters class="filters"/>
+
     </div>
   </section>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
+  import { mapMultiRowFields } from 'vuex-map-fields';
+  import {mapState, mapMutations} from 'vuex'
+  import TodoTable from '../components/TodoTable'
+  import BaseButton from '../components/BaseButton'
+  import Filters from '../components/Filters'
 
 export default {
-  components: {
-    AppLogo
-  }
+  name: 'TodoList',
+  data () {
+    return {
+      columns: [
+        {label: 'Статус', name: 'done'},
+        {label: 'Название', name: 'title'},
+        {label: 'Категория', name: 'category'},
+        {label: 'Управление', name: 'controls'},
+        ],
+    }
+  },
+  components: { Filters, BaseButton, TodoTable },
+  computed: {
+    ...mapMultiRowFields(['tasks']),
+    ...mapState([ 'categories', 'filters']),
+    filteredTasks(){
+      return this.tasks.filter(
+        e=>this.filters.categories.includes(e.category)
+        &&(e.done===this.filters.showDone
+            ||!e.done===this.filters.showUndone))
+    }
+  },
+  methods: {
+    ...mapMutations(['ADD_TASK', 'REMOVE_TASK']),
+  },
+
 }
 </script>
 
-<style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+<style lang="scss" scoped>
+h2{
+  font-size: 20px;
+  letter-spacing: .005em;
+  font-weight: 400;
+  text-align: left;
+  padding: 12px 16px;
 }
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.table-container{
+  width: 700px;
+  .del{
+    text-decoration: line-through;
+  }
 }
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+.filters{
+  margin-left: 16px;
 }
-
-.links {
-  padding-top: 15px;
+.icon{
+  width: 24px;
 }
 </style>
 
